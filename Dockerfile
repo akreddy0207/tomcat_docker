@@ -11,6 +11,6 @@ RUN chmod g+rwx /opt/tomcat/conf && chmod g+r /opt/tomcat/conf/*
 RUN chown -R tomcat /opt/tomcat/logs/ /opt/tomcat/temp /opt/tomcat/webapps /opt/tomcat/work
 RUN chgrp -R tomcat /opt/tomcat/bin && chgrp -R tomcat /opt/tomcat/lib && chmod g+rwx /opt/tomcat/bin && chmod g+r /opt/tomcat/bin/*
 WORKDIR /opt/tomcat/webapps
-RUN wget https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+RUN wget https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war --no-check-certificate
 EXPOSE 8080
 CMD ["/opt/tomcat/bin/catalina.sh","run"]
