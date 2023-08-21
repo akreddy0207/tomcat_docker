@@ -1,0 +1,27 @@
+FROM alpine:latest
+
+ARG tomcat_version=8.5.6
+
+# Install OpenJDK, wget, and other dependencies
+RUN apk update && apk add openjdk8 wget
+
+# Create a tomcat group and user
+RUN addgroup -S tomcat && mkdir /opt/tomcat
+RUN adduser -S -s /bin/nologin -G tomcat -h /opt/tomcat tomcat
+
+# Download and extract Tomcat
+WORKDIR /
+RUN wget https://archive.apache.org/dist/tomcat/tomcat-8/v$tomcat_version/bin/apache-tomcat-$tomcat_version.tar.gz
+RUN tar -zxvf apache-tomcat-$tomcat_version.tar.gz -C /opt/tomcat --strip-components=1
+
+# Adjust permissions and ownership
+RUN chgrp -R tomcat /opt/tomcat/conf && chmod g+rwx /opt/tomcat/conf && chmod g+r /opt/tomcat/conf/*
+RUN chown -R tomcat /opt/tomcat/logs/ /opt/tomcat/temp /opt/tomcat/webapps /opt/tomcat/work
+RUN chgrp -R tomcat /opt/tomcat/bin && chgrp -R tomcat /opt/tomcat/lib && chmod g+rwx /opt/tomcat/bin && chmod g+r /opt/tomcat/bin/*
+
+# Download sample.war
+WORKDIR /opt/tomcat/webapps
+RUN wget https://tomcat.apache.org/tomcat-7.0-doc/appdev/sample/sample.war
+
+EXPOSE 8080
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]
